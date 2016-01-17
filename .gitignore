@@ -1,4 +1,5 @@
 **/*.swp
 **/*.swo
 **/*.un~
+**/.ipynb_checkpoints/*
 **/.DS_Store
