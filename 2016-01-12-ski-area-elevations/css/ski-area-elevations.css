@@ -25,9 +25,9 @@ svg {
 }
 
 .resort-rect {
-    stroke: transparent;
-    fill: black;
-    opacity: 0.5;
+    stroke: black;
+    stroke-width: 0px;
+    fill: #888888;
 }
 
 .pane {
@@ -36,4 +36,8 @@ svg {
 }
 .resort-name {
     font: 11px sans-serif;
+}
+
+.hovered {
+    stroke-width: 1px;
 }

@@ -8,7 +8,6 @@ function skiAreaElevationsPlot() {
             // Select the svg element, if it exists.
             var svg = d3.select(this).selectAll("svg").data([data]);
 
-
             // Otherwise, create the skeletal chart.
             var gEnter = svg.enter().append("svg").append("g");
 
@@ -56,10 +55,22 @@ function skiAreaElevationsPlot() {
             var xScale = d3.scale.linear()
             .domain([0, cumWidths[cumWidths.length - 1]])
             .range([0, width - margin.left - margin.right]);
-                console.log('cumWidths:', cumWidths);
 
             zoom.x(xScale).scaleExtent([1,data.length / 30])
             .xExtent([0, cumWidths[cumWidths.length-1]]);
+
+            var gYAxis = gEnter.append("g")
+            .attr("class", "y axis")
+            .attr("transform", "translate(" + (width - margin.right) + "," + margin.top + ")");
+
+            var yAxis = d3.svg.axis()
+            .scale(yScale)
+            .orient("right")
+            .tickSize(-(width - margin.left - margin.right))
+            .tickPadding(6);
+
+            gYAxis.call(yAxis);
+
 
             var gMain = gEnter.append('g')
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -68,18 +79,24 @@ function skiAreaElevationsPlot() {
             .attr("id", "clip")
             .append("rect")
             .attr("x", 0)
-            .attr("y", 0)
+            .attr("y", -margin.top)
             .attr("width", width - margin.left - margin.right)
-            .attr("height", height - margin.top - margin.bottom);
+            .attr("height", height - margin.bottom);
 
             function skiAreaMouseover(d) {
                 gMain.selectAll('#n-' + d.uid)
                 .attr('visibility', 'visible');
+
+                d3.select(this)
+                .classed('hovered', true);
             }
 
             function skiAreaMouseout(d) {
                 gMain.selectAll('#n-' + d.uid)
                 .attr('visibility', 'hidden');
+
+                d3.select(this)
+                .classed('hovered', false);
             }
 
             // the rectangle showing each rect
@@ -90,7 +107,7 @@ function skiAreaElevationsPlot() {
             .classed('resort-rect', true)
             .attr("clip-path", "url(#clip)")
             .on('mouseover', skiAreaMouseover)
-            //.on('mouseout', skiAreaMouseout);
+            .on('mouseout', skiAreaMouseout);
 
             // the name of each resort
             gMain.selectAll('.resort-name')
@@ -107,19 +124,9 @@ function skiAreaElevationsPlot() {
                 else
                     return 'end';
             })
-            .text(function(d) { return d.name; });
-
-            var gYAxis = svg.append("g")
-            .attr("class", "y axis")
-            .attr("transform", "translate(" + (width - margin.right) + "," + margin.top + ")");
-
-            var yAxis = d3.svg.axis()
-            .scale(yScale)
-            .orient("right")
-            .tickSize(-(width - margin.left - margin.right))
-            .tickPadding(6);
-
-            gYAxis.call(yAxis);
+            .text(function(d,i) { 
+                console.log('i:', i, d.name);
+                return d.name; });
 
             draw();
 
@@ -140,12 +147,7 @@ function skiAreaElevationsPlot() {
                 .classed('resort-rect', true);
 
                 gMain.selectAll('.resort-name')
-                .attr('x', function(d,i) { 
-                    console.log('d:', d);
-                    var x = scaledX(d,i) + rectWidth(d,i) / 2; 
-                    console.log('x', x);
-                    return x;
-                })
+                .attr('x', function(d,i) { return scaledX(d,i) + rectWidth(d,i) / 2; })
                 .attr('y', function(d) { return yScale(d.max_elev) - 10; });
             }
         });
