@@ -2,6 +2,7 @@ function skiAreaElevationsPlot() {
     var width = 550;
     var height = 400;
     var margin = {'top': 30, 'left': 30, 'bottom': 30, 'right': 40};
+
     
     function chart(selection) {
         selection.each(function(data) {
@@ -83,7 +84,8 @@ function skiAreaElevationsPlot() {
             .attr("width", width - margin.left - margin.right)
             .attr("height", height - margin.bottom);
 
-            function skiAreaMouseover(d) {
+            function skiAreaMouseover(d, i) {
+                console.log('d', i, d.name);
                 gMain.selectAll('#n-' + d.uid)
                 .attr('visibility', 'visible');
 
@@ -93,7 +95,7 @@ function skiAreaElevationsPlot() {
 
             function skiAreaMouseout(d) {
                 gMain.selectAll('#n-' + d.uid)
-                .attr('visibility', 'hidden');
+                .attr('visibility', resortVisibility);
 
                 d3.select(this)
                 .classed('hovered', false);
@@ -117,7 +119,7 @@ function skiAreaElevationsPlot() {
             .classed('resort-name', true)
             .attr('id', function(d) { return 'n-' + d.uid; })
             .attr("clip-path", "url(#clip)")
-            .attr('visibility', 'hidden')
+            .attr('visibility', resortVisibility)
             .attr('text-anchor', function(d, i) {
                 if (i < data.length / 2) 
                     return 'start';
@@ -125,10 +127,17 @@ function skiAreaElevationsPlot() {
                     return 'end';
             })
             .text(function(d,i) { 
-                console.log('i:', i, d.name);
                 return d.name; });
 
             draw();
+
+            function resortVisibility(d) {
+                if (d.area > 2)
+                    return 'visible';
+                else
+                    return 'hidden';
+            }
+
 
             function draw() {
                 function scaledX(d,i) {
@@ -139,6 +148,14 @@ function skiAreaElevationsPlot() {
                     return xScale(Math.log(d.area)) - xScale(0); 
                 }
 
+                function resortLabelPosition(d, i) {
+                    if (i % 1 === 0)
+                        return `translate(${scaledX(d,i) + rectWidth(d,i) / 2},${yScale(d.max_elev) - 7})`;
+                    else
+                        return `translate(${scaledX(d,i) + rectWidth(d,i) / 2},${yScale(d.min_elev) + 12})`;
+
+                }
+
                 gMain.selectAll('.resort-rect')
                 .attr('x', scaledX)
                 .attr('y', function(d) { return yScale(d.max_elev); })
@@ -147,8 +164,8 @@ function skiAreaElevationsPlot() {
                 .classed('resort-rect', true);
 
                 gMain.selectAll('.resort-name')
-                .attr('x', function(d,i) { return scaledX(d,i) + rectWidth(d,i) / 2; })
-                .attr('y', function(d) { return yScale(d.max_elev) - 10; });
+                .attr('transform', resortLabelPosition)
+                .attr('visibility', resortVisibility);
             }
         });
     }
