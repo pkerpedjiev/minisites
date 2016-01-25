@@ -82,7 +82,7 @@ function skiAreaElevationsPlot() {
             .attr("x", 0)
             .attr("y", -margin.top)
             .attr("width", width - margin.left - margin.right)
-            .attr("height", height - margin.bottom);
+            .attr("height", height);
 
             function skiAreaMouseover(d, i) {
                 console.log('d', i, d.name);
@@ -101,24 +101,23 @@ function skiAreaElevationsPlot() {
                 .classed('hovered', false);
             }
 
-            // the rectangle showing each rect
-            gMain.selectAll('.resort-rect')
+
+            var gResorts = gMain.selectAll('.resort-g')
             .data(data)
             .enter()
-            .append('rect')
+            .append('g')
+            .attr("clip-path", "url(#clip)");
+
+            // the rectangle showing each rect
+            gResorts.append('rect')
             .classed('resort-rect', true)
-            .attr("clip-path", "url(#clip)")
             .on('mouseover', skiAreaMouseover)
             .on('mouseout', skiAreaMouseout);
 
             // the name of each resort
-            gMain.selectAll('.resort-name')
-            .data(data)
-            .enter()
-            .append('text')
+            gResorts.append('text')
             .classed('resort-name', true)
             .attr('id', function(d) { return 'n-' + d.uid; })
-            .attr("clip-path", "url(#clip)")
             .attr('visibility', resortVisibility)
             .attr('text-anchor', function(d, i) {
                 if (i < data.length / 2) 
@@ -149,7 +148,7 @@ function skiAreaElevationsPlot() {
                 }
 
                 function resortLabelPosition(d, i) {
-                    if (i % 1 === 0)
+                    if (i % 2 === 0) 
                         return `translate(${scaledX(d,i) + rectWidth(d,i) / 2},${yScale(d.max_elev) - 7})`;
                     else
                         return `translate(${scaledX(d,i) + rectWidth(d,i) / 2},${yScale(d.min_elev) + 12})`;
@@ -164,6 +163,8 @@ function skiAreaElevationsPlot() {
                 .classed('resort-rect', true);
 
                 gMain.selectAll('.resort-name')
+                //.attr('x', function(d,i) { return scaledX(d,i) + rectWidth(d,i) / 2; })
+                //.attr('y', function(d,i) { return yScale(d.max_elev) - 7; })
                 .attr('transform', resortLabelPosition)
                 .attr('visibility', resortVisibility);
             }
