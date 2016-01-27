@@ -52,13 +52,18 @@ function skiAreaElevationsPlot() {
                 r.push(+a.cumarea);
                 return r;
                 }, []);
+            
+            var totalWidth = cumWidths[cumWidths.length - 1] + 
+                Math.log(data[data.length - 1].area);
+
+            var xScaleDomain = [-totalWidth / 10, cumWidths[cumWidths.length - 1] + totalWidth / 10];
 
             var xScale = d3.scale.linear()
-            .domain([0, cumWidths[cumWidths.length - 1]])
+            .domain(xScaleDomain)
             .range([0, width - margin.left - margin.right]);
 
             zoom.x(xScale).scaleExtent([1,data.length / 30])
-            .xExtent([0, cumWidths[cumWidths.length-1]]);
+            .xExtent(xScaleDomain);
 
             var gYAxis = gEnter.append("g")
             .attr("class", "y axis")
@@ -120,10 +125,7 @@ function skiAreaElevationsPlot() {
             .attr('id', function(d) { return 'n-' + d.uid; })
             .attr('visibility', resortVisibility)
             .attr('text-anchor', function(d, i) {
-                if (i < data.length / 2) 
-                    return 'start';
-                else
-                    return 'end';
+                return 'middle';
             })
             .text(function(d,i) { 
                 return d.name; });
