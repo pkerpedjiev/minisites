@@ -127,7 +127,7 @@ function drawIsochroneDiffMap(initialLat, initialLon, travelTimeGridJson) {
         var contourPath = g.selectAll("path")
         .data(contours)
         .enter().append("path")
-        .style("fill",function(d, i) { return colours(d.level);})
+        .style("fill",function(d, i) { console.log('d.level:', d.level); return colours(d.level);})
         .style("stroke", defaultContourColor)
         .style('stroke-width', defaultContourWidth)
         .style('opacity', 1)
