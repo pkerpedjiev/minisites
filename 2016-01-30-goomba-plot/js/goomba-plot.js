@@ -17,10 +17,29 @@ function goombaPlot() {
             svg.attr('width', width)
             .attr('height', height);
 
-            let chromosomes = new Set(data.map((d) => { return d.chr; }));
-            console.log('chromosomes', chromosomes);
+            // Get the names of the chromosomes
+            let chromosomes = Array.from(new Set(data.map((d) => { return d.chr; })));
+            let chromosomeLengths = chromosomes.map((d) => {
+                let lengths = data.filter((e) => { return e.chr == d;  })
+                                .map((e) => {return +e.end; })
+                return {"name": d,
+                        "length": d3.max(lengths)
+                        }});
 
-            console.log('data', data);
+            // order them according to the maximum start position
+            // of all genes
+            let chromosomesInOrder = chromosomeLengths
+                .sort((a,b) => { return b.length - a.length; })
+                .map((d) => { return d.name; });
+
+            console.log('chromosomesInOrder:', chromosomesInOrder);
+
+            var yScale = d3.scale.ordinal()
+            .domain(chromosomesInOrder)
+            .rangeRoundBands([0, height - margin.top - margin.bottom]);
+
+            console.log('chromosomes', chromosomes);
+            console.log('chromosomeLengths', chromosomeLengths);
         });
     }
 
