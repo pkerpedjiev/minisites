@@ -24,10 +24,8 @@ svg {
   stroke: #ddd;
 }
 
-.resort-rect {
-    stroke: black;
-    stroke-width: 0px;
-    fill: #888888;
+.gene-rect {
+    stroke-width: 1px;
 }
 
 .pane {
