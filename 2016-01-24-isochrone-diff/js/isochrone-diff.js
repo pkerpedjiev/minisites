@@ -1,6 +1,6 @@
-function drawIsochroneMap(initialLat, initialLon, travelTimeGridJson) {
+function drawIsochroneDiffMap(initialLat, initialLon, travelTimeGridJson) {
     //var map = L.map('isochroneMap').setView([48.2858, 6.7868], 4);
-    var map = new L.Map("isochroneMap", {
+    var map = new L.Map("isochroneDiffMap", {
         center: new L.LatLng(initialLat, initialLon),
         zoom: 5
     });
@@ -27,7 +27,7 @@ function drawIsochroneMap(initialLat, initialLon, travelTimeGridJson) {
     map._initPathRoot();
 
     // We pick up the SVG from the map object
-    var svg = d3.select("#isochroneMap").select("svg");
+    var svg = d3.select("#isochroneDiffMap").select("svg");
     var g = svg.append("g").attr("class", "leaflet-zoom-hide").attr('opacity', 0.8);
     
     var times = [2,4,6,8,10,12,14,16,18,20,22,24];
@@ -42,7 +42,7 @@ function drawIsochroneMap(initialLat, initialLon, travelTimeGridJson) {
     function drawLegend() {
         var legendHeight = 40;
 
-        var svgLegend = d3.select("#isochroneMapLegend").append("svg");
+        var svgLegend = d3.select("#isochroneDiffMapLegend").append("svg");
 
 
         svgLegend.attr("width", width)
@@ -127,7 +127,7 @@ function drawIsochroneMap(initialLat, initialLon, travelTimeGridJson) {
         var contourPath = g.selectAll("path")
         .data(contours)
         .enter().append("path")
-        .style("fill",function(d, i) { return colours(d.level);})
+        .style("fill",function(d, i) { console.log('d.level:', d.level); return colours(d.level);})
         .style("stroke", defaultContourColor)
         .style('stroke-width', defaultContourWidth)
         .style('opacity', 1)
