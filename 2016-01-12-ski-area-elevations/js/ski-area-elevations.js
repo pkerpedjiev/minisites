@@ -1,8 +1,9 @@
+"use strict";
+
 function skiAreaElevationsPlot() {
     var width = 550;
     var height = 400;
     var margin = {'top': 30, 'left': 30, 'bottom': 30, 'right': 40};
-
     
     function chart(selection) {
         selection.each(function(data) {
@@ -18,7 +19,7 @@ function skiAreaElevationsPlot() {
             var zoom = d3.behavior.zoom()
                 .on("zoom", draw);
 
-            data = Object.keys(data).map(function(key){
+            data = Object.keys(data).map(function(key) {
                     return data[key];
             }).sort(function(a,b) {
                 return b.max_elev - a.max_elev; 
@@ -53,12 +54,17 @@ function skiAreaElevationsPlot() {
                 return r;
                 }, []);
 
+            var totalWidth = cumWidths[cumWidths.length - 1] + 
+                Math.log(data[data.length - 1].area);
+
+            var xScaleDomain = [-totalWidth / 10, cumWidths[cumWidths.length - 1] + totalWidth / 10];
+
             var xScale = d3.scale.linear()
-            .domain([0, cumWidths[cumWidths.length - 1]])
+            .domain(xScaleDomain)
             .range([0, width - margin.left - margin.right]);
 
-            zoom.x(xScale).scaleExtent([1,data.length / 30])
-            .xExtent([0, cumWidths[cumWidths.length-1]]);
+            zoom.x(xScale).scaleExtent([1,data.length / 10])
+            .xExtent(xScaleDomain);
 
             var gYAxis = gEnter.append("g")
             .attr("class", "y axis")
@@ -85,7 +91,6 @@ function skiAreaElevationsPlot() {
             .attr("height", height);
 
             function skiAreaMouseover(d, i) {
-                console.log('d', i, d.name);
                 gMain.selectAll('#n-' + d.uid)
                 .attr('visibility', 'visible');
 
@@ -120,10 +125,7 @@ function skiAreaElevationsPlot() {
             .attr('id', function(d) { return 'n-' + d.uid; })
             .attr('visibility', resortVisibility)
             .attr('text-anchor', function(d, i) {
-                if (i < data.length / 2) 
-                    return 'start';
-                else
-                    return 'end';
+                return 'middle';
             })
             .text(function(d,i) { 
                 return d.name; });
@@ -137,10 +139,13 @@ function skiAreaElevationsPlot() {
                     return 'hidden';
             }
 
+            data.sort((a,b) => {
+                return b.area - a.area;
+            });
 
             function draw() {
                 function scaledX(d,i) {
-                    return xScale(cumWidths[i]) - (xScale(Math.log(d.area)) - xScale(0));
+                    return xScale(d.cumarea) - (xScale(Math.log(d.area)) - xScale(0));
                 }
 
                 function rectWidth(d,i) {
@@ -148,18 +153,48 @@ function skiAreaElevationsPlot() {
                 }
 
                 function resortLabelPosition(d, i) {
-                    if (i % 2 === 0) 
-                        return `translate(${scaledX(d,i) + rectWidth(d,i) / 2},${yScale(d.max_elev) - 7})`;
+                    return `translate(${scaledX(d,i) + rectWidth(d,i) / 2},${yScale(d.max_elev) - 7})`;
+                    /*
                     else
                         return `translate(${scaledX(d,i) + rectWidth(d,i) / 2},${yScale(d.min_elev) + 12})`;
-
+                        */
                 }
+
+                let visibleAreas = data.filter( (d) => {
+                    if ((d.cumarea - Math.log(d.area)) > xScale.invert(0) &&
+                        (d.cumarea) < xScale.invert(width - margin.left - margin.right))
+                        return true;
+                    return false;
+                });
+
+                gMain.selectAll('.resort-name')
+                .remove();
+
+                console.log('va[0]:', visibleAreas[0]);
+
+                // add the largest ski area
+                var textResortNames = gMain.selectAll('.resort-name')
+                .data(visibleAreas.slice(0,10))
+                .enter()
+                .append('text')
+                .classed('resort-name', true)
+                .attr('id', (d) => { return 'n-' + d.uid; })
+                .attr('text-anchor', (d) => { return 'middle' })
+                .text((d) => { return d.name; });
+
+                function intersectRect(r1, r2) {
+                    return !(r2.left > r1.right || 
+                             r2.right < r1.left || 
+                                 r2.top > r1.bottom ||
+                                     r2.bottom < r1.top);
+                }
+
 
                 gMain.selectAll('.resort-rect')
                 .attr('x', scaledX)
-                .attr('y', function(d) { return yScale(d.max_elev); })
+                .attr('y', (d) => { return yScale(d.max_elev); })
                 .attr('width', rectWidth)
-                .attr('height', function(d) { return yScale(d.min_elev) - yScale(d.max_elev);  })
+                .attr('height', (d) => { return yScale(d.min_elev) - yScale(d.max_elev);  })
                 .classed('resort-rect', true);
 
                 gMain.selectAll('.resort-name')
@@ -167,6 +202,33 @@ function skiAreaElevationsPlot() {
                 //.attr('y', function(d,i) { return yScale(d.max_elev) - 7; })
                 .attr('transform', resortLabelPosition)
                 .attr('visibility', resortVisibility);
+
+                textResortNames.each(function(d,i) {
+                    console.log('this:', this);
+                    let bb1 = this.getBoundingClientRect();
+
+                    if (d3.select(this).attr('visibility') == 'hidden')
+                        return;
+
+                    textResortNames.each(function(e,j) {
+                        console.log(`i: ${i} j: ${j}`);
+                        if (j <= i)
+                            return;
+                        
+                        let bb2 = d3.select(this).node().getBoundingClientRect();
+
+                        if (intersectRect(bb1, bb2)) {
+                            d3.select(this).attr('visibility', 'hidden');
+                            return;
+                        }
+                    });
+                });
+                console.log('resortNames.length', textResortNames.length);
+                /*
+                console.log('intersect', intersectRect(
+                    t.node().getBoundingClientRect(),
+                    t1.node().getBoundingClientRect()));
+                    */
             }
         });
     }
