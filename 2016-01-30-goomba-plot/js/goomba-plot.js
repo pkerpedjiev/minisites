@@ -94,9 +94,14 @@ function goombaPlot() {
             console.log('colorDomain:', colorDomain);
 
             gMain.selectAll('rect')
+
+            let gGenes = gMain.selectAll('.gene')
             .data(data)
             .enter()
-            .append('rect')
+            .append('g')
+            .classed('gene', true)
+
+            gGenes.append('rect')
             .classed('gene-rect', true)
             .attr('x', (d) => { return xScale(d.start); })
             .attr('y', (d) => { return yScale(d.chr); })
@@ -108,17 +113,55 @@ function goombaPlot() {
             zoom.x(xScale).scaleExtent([1,data.length / 10])
             .xExtent(xScaleDomain);
 
+            let labelSort = (a,b) => { return (+b.count - (+a.count)); }
+            var scaledX, scaledY;
+
+            data.sort(labelSort);
+
             function draw() {
+                scaledX = xScale;
+                scaledY = yScale;
+
                 gMain.selectAll('rect')
                 .attr('x', (d) => { return xScale(d.start); })
                 .attr('y', (d) => { return yScale(d.chr); })
                 .attr('width', (d) => { return xScale(d.end) - xScale(d.start); });
 
                 gXAxis.call(xAxis);
+
+                let labelFilter =  (d) => {
+                    if ((d.start) > scaledX.invert(0) &&
+                        (d.end) < scaledX.invert(width - margin.left - margin.right))
+                    return true;
+                    return false;
+                }
+
+                let visibleAreas = data.filter(labelFilter);
+                let labelText = (d) => { return d.symbol; };
+                let labelAnchor = (d) => { return 'middle' };
+                let labelId = (d) => { return `n-${d.geneid}`; }
+                let labelPosition = (d,i) => { 
+                    return `translate(${(scaledX(d.start) + scaledY(d.end)) / 2},
+                    ${scaledY(d.chr) - 7})`;
+                }
+
+                var zoomableLabelsOrientation = zoomableLabels()
+                .labelFilter(labelFilter)
+                .labelText(labelText)
+                .labelAnchor(labelAnchor)
+                .labelId(labelId)
+                .labelPosition(labelPosition)
+                .labelParent(gMain)
+                .labelSort(labelSort);
+
+                gGenes.call(zoomableLabelsOrientation);
             }
+
+            draw();
 
             console.log('chromosomes', chromosomes);
             console.log('chromosomeLengths', chromosomeLengths);
+
         });
     }
 
