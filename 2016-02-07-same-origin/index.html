@@ -14,5 +14,9 @@
         d3.json('https://vector.mapzen.com/osm/all/13/1311/3168.json?api_key=vector-tiles-LM25tq4', function(data) {
             console.log('data:', data)
         });
+
+        d3.json('http://transport.opendata.ch/v1/locations?query=Basel', function(data) {
+            console.log('data:', data)
+        });
     </script>
 </body>
