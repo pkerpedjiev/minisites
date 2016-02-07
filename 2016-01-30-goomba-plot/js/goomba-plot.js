@@ -119,8 +119,8 @@ function goombaPlot() {
             data.sort(labelSort);
 
             function draw() {
-                scaledX = xScale;
-                scaledY = yScale;
+                let scaledX = xScale;
+                let scaledY = yScale;
 
                 gMain.selectAll('rect')
                 .attr('x', (d) => { return xScale(d.start); })
@@ -131,8 +131,8 @@ function goombaPlot() {
 
                 let labelFilter =  (d) => {
                     if ((d.start) > scaledX.invert(0) &&
-                        (d.end) < scaledX.invert(width - margin.left - margin.right))
-                    return true;
+                        (d.end) < scaledX.invert(width - margin.right))
+                        return true;
                     return false;
                 }
 
@@ -141,7 +141,7 @@ function goombaPlot() {
                 let labelAnchor = (d) => { return 'middle' };
                 let labelId = (d) => { return `n-${d.geneid}`; }
                 let labelPosition = (d,i) => { 
-                    return `translate(${(scaledX(d.start) + scaledY(d.end)) / 2},
+                    return `translate(${(scaledX(d.start) + scaledX(d.end)) / 2},
                     ${scaledY(d.chr) - 7})`;
                 }
 

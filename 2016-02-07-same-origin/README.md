@@ -1,0 +1,3 @@
+Test the same-origin policy using MapZen's vector api.
+
+- No idea why the d3.json request in index.html works...
