@@ -3,3 +3,7 @@
     strok-width: 1;
     fill: #AAAAAA;
 }
+
+.sample-point {
+    stroke: black;
+}

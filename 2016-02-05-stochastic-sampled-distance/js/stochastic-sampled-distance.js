@@ -52,7 +52,7 @@ d3.xml('img/alphabet_shortened.svg', "application/xml", function(xml) {
 
     //var dA = "m 0,0 -2.064,0 0,-3.456 -1.992,0 0,3.456 -1.704,0 0,1.632 1.704,0 0,9.504 c 0,1.272 0.864,1.992 2.424,1.992 0.48,0 0.96,-0.048 1.632,-0.168 l 0,-1.68 c -0.264,0.072 -0.576,0.096 -0.96,0.096 -0.864,0 -1.104,-0.24 -1.104,-1.128 l 0,-8.616 2.064,0 0,-1.632 z";
     var dA ="m -1255.1286,94.314338 c -1.62,0.36 -2.34,0.36 -3.24,0.36 -5.22,0 -8.1,-2.7 -8.1,-7.38 l 0,-55.44 c 0,-16.74 -12.24,-25.7399996 -35.46,-25.7399996 -13.68,0 -25.02,3.9599996 -31.32,10.9799996 -4.32,4.86 -6.12,10.26 -6.48,19.62 l 15.12,0 c 1.26,-11.52 8.1,-16.74 22.14,-16.74 13.5,0 21.06,5.04 21.06,14.04 l 0,3.96 c 0,6.3 -3.78,9 -15.66,10.44 -21.24,2.7 -24.48,3.42 -30.24,5.76 -10.98,4.5 -16.56,12.96 -16.56,25.2 0,17.1 11.88,27.900002 30.96,27.900002 11.88,0 21.42,-4.14 32.04,-13.860002 1.08,9.540002 5.76,13.860002 15.48,13.860002 3.06,0 5.4,-0.36 10.26,-1.62 l 0,-11.340002 z m -26.28,-20.88 c 0,5.04 -1.44,8.1 -5.94,12.24 -6.12,5.58 -13.5,8.46 -22.32,8.46 -11.7,0 -18.54,-5.58 -18.54,-15.12 0,-9.9 6.66,-14.94 22.68,-17.28 15.84,-2.16 19.08,-2.88 24.12,-5.22 l 0,16.92 z";
-    var dI ="m -1037.6429,18.399337 -14.94,0 0,94.320003 14.94,0 0,-94.320003 z m 0,-36.9 -15.12,0 0,18.90000046 15.12,0 0,-18.90000046 z";
+    var dI ="m -1177.6429,18.399337 -14.94,0 0,94.320003 14.94,0 0,-94.320003 z m 0,-36.9 -15.12,0 0,18.90000046 15.12,0 0,-18.90000046 z";
 
     var minBounds = {x: 10000, y: 10000};
     var maxBounds = {x: -10000, y: -10000};
@@ -64,27 +64,49 @@ d3.xml('img/alphabet_shortened.svg', "application/xml", function(xml) {
     gLetters.selectAll('.path')
     .data([dA,dI])
     .enter()
+    .append('g')
+    .classed('letter-g', true)
     .append('path')
     .classed('letter', true)
     .attr('d', d => { return d; })
 
     let bounds = gLetters.node().getBoundingClientRect();
+    let bounds1 = gLetters.node().getBBox();
 
-    gLetters.selectAll('.letter')
-    .each(function(d) {
+    console.log('bounds:', bounds);
+    console.log('bounds1:', bounds1);
+
+    gLetters.selectAll('.letter-g')
+    .each(function(d, i) {
         // sample points inside the bounding box of the letter
-        let bbox = this.getBoundingClientRect();
+        let bbox1 = this.getBoundingClientRect();
+        let bbox = this.getBBox();
 
-        let toSample = 10;
+        let toSample = 100;
         let points = [];
         for (let i = 0; i < toSample; i++) {
-            let newPoint =  [bbox.left + Math.random() * bbox.width,
-                             bbox.top + Math.random() * bbox.height]
-            var distance = closestPoint(this, newPoint);
+            let newPoint =  [bbox.x + Math.random() * bbox.width,
+                             bbox.y + Math.random() * bbox.height]
+            var distance = closestPoint(d3.select(this).select('path').node(), newPoint);
+
+            points.push({'point': newPoint, 'distance': distance.distance});
         }
 
-        console.log('points:', points);
+        let colorScale = d3.scale.linear()
+        .domain(d3.extent(points.map(p => { return p.distance })))
+        .range(['blue', 'white'])
 
+        d3.select(this).selectAll('.sample-point')
+        .data(points)
+        .enter()
+        .append('circle')
+        .classed('sample-point', true)
+        .attr('cx', d => { return d.point[0]; })
+        .attr('cy', d => { return d.point[1]; })
+        .attr('r', 3)
+        .attr('fill', d => { return colorScale(d.distance); });
+
+        console.log('points:', points);
         console.log('bbox:', bbox);
     });
 
