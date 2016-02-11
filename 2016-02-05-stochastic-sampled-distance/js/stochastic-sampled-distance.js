@@ -125,7 +125,7 @@ d3.xml('img/alphabet_shortened.svg', "application/xml", function(xml) {
         let bbox1 = this.getBoundingClientRect();
         let bbox = this.getBBox();
 
-        let toSample = 200;
+        let toSample = 10;
         let points = [];
         let closeEnough = 0;
 
