@@ -3,3 +3,13 @@
     strok-width: 1;
     fill: #AAAAAA;
 }
+
+.sample-point {
+    stroke: black;
+}
+
+.axis path, .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
