@@ -1,0 +1,7 @@
+[pkerp@toc 2016-02-05-stochastic-sampled-distance] [master]$ python scripts/png_to_grayscale_array.py data/bernhard_structures/*rot*.png -t 30 -n 2000 -r 100
+stru1-rot1 | stru1-rot2: 0.23350183863:
+stru1-rot1 | stru2-rot1: 2.18074114093:
+stru1-rot1 | stru2-rot2: 1.96014512139:
+stru1-rot2 | stru2-rot1: 2.21993469604:
+stru1-rot2 | stru2-rot2: 1.97521436717:
+stru2-rot1 | stru2-rot2: 0.819045413633:
