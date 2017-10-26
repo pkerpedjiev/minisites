@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Input test</title>
+  
+<p>
+  <label for="nAngle" 
+     style="display: inline-block; width: 240px; text-align: right">
+     angle = <span id="nAngle-value">…</span>
+  </label>
+  <input type="range" min="0" max="360" id="nAngle">
+</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.min.js"></script>
+<script>
+
+var width = 1200;
+var height = 1200;
+ 
+var svg = d3.select("body")
+      .append("svg")
+      .style('overflow', 'display')
+      .attr("width", width)    
+      .attr("height", height)
+.append('g')
+.attr('transform', 'translate(400,400)'); 
+
+var x = d3.scaleLinear()
+    .domain([-width, width])
+    .range([-width, width]);
+
+var y = d3.scaleLinear()
+    .domain([-height, height])
+    .range([-height, height]);
+
+  // Add the y Axis
+  svg.append("g")
+      .call(d3.axisRight(y).ticks(60));
+
+svg.append("g")
+.call(d3.axisBottom(x).ticks(60));
+
+let gTransform = svg
+.append('g')
+.classed('g-rot', true)
+.attr('transform', 'rotate(0, 0,0)scale(1)')
+.append('rect')
+.attr('x', 274.134 )
+.attr('y', 158.134)
+.attr('width', 20)
+.attr('height', 20)
+;
+
+svg
+.append('g')
+.classed('g-rot', true)
+.attr('transform', 'rotate(0, 0,0)scale(-.707,.707)')
+.append('rect')
+.attr('x', 274.134 )
+.attr('y', 158.134)
+.attr('width', 50)
+.attr('height', 50)
+.style('fill', 'green')
+;
+
+svg
+.append('circle')
+.attr('cx', 5)
+.attr('cy', -110.999)
+.attr('r', 3)
+
+svg
+.append('g')
+.classed('g-rot', true)
+.attr('transform', 'rotate(-135, 5, -110.1)scale(-.707,.707)')
+.append('rect')
+.attr('x', 274.134 )
+.attr('y', 158.134)
+.attr('width', 20)
+.attr('height', 20)
+.style('fill', 'blue')
+;
+
+svg
+.append('g')
+.attr('transform', 'translate(-5, 110.1)')
+.append('g')
+.classed('g-rot', true)
+.attr('transform', 'rotate(0, 0,0)scale(-.707,.707)')
+.append('rect')
+.attr('x', 274.134 )
+.attr('y', 158.134)
+.attr('width', 50)
+.attr('height', 50)
+.style('fill', 'purple')
+;
+
+svg
+.append('g')
+.attr('transform', 'rotate(-135)')
+.append('g')
+.attr('transform', 'translate(-5, 110.1)')
+.append('g')
+.classed('g-rot', true)
+.attr('transform', 'rotate(0, 0,0)scale(-.707,.707)')
+.append('rect')
+.attr('x', 274.134 )
+.attr('y', 158.134)
+.attr('width', 50)
+.attr('height', 50)
+.style('fill', 'cyan')
+;
+
+svg
+.append('g')
+.classed('g-rot', true)
+.attr('transform', 'rotate(-135)translate(-5,110.1)scale(-.707,.707)')
+.append('rect')
+.attr('x', 274.134 )
+.attr('y', 158.134)
+.attr('width', 50)
+.attr('height', 50)
+.style('fill', 'cyan')
+;
+
+/*
+let gTransform = svg.selectAll('.g-rot')
+.data([0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220, 230,240,250,260,270,280,290,300,310,320,330,340,350,360,370])
+.enter()
+.append('g')
+.classed('g-rot', true)
+.attr('transform', function(d) { return 'rotate(' + d +  ', 0,0)scale(2)' })
+.append('rect')
+.attr('x', 100)
+.attr('y', 100)
+.attr('width', 20)
+.attr('height', 20)
+;
+*/
+
+</script>
