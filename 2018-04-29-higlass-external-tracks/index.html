@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HiGlass External Tracks</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/higlass@1.0.0-alpha.1/dist/styles/hglib.css" type="text/css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.5.4/react.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.5.4/react-dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.5.2/pixi.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.31.0/react-bootstrap.min.js"></script>
+    <script src="https://unpkg.com/higlass-geojson@v0.1.2/dist/higlass-geojson.js"></script>
+
+
+</head>
+<body >
+
+        <div
+            id="development-demo"
+            style="width: 550px; height: 500px;">
+        </div>
+</body>
+<script src="https://unpkg.com/higlass@1.0.0-alpha.1/dist/scripts/hglib.js"></script>
+</script>
+<script>
+
+ var testViewConfig =
+{
+  "editable": true,
+  "trackSourceServers": [
+    "/api/v1",
+    "http://higlass.io/api/v1"
+  ],
+  "exportViewUrl": "/api/v1/viewconfs",
+  "views": [
+    {
+      "initialXDomain": [
+        -112.2337097112319,
+        -111.22289010889759
+      ],
+      "initialYDomain": [
+        -45.1398720024116,
+        -43.961988726235724
+      ],
+      "tracks": {
+        "top": [],
+        "left": [],
+        "center": [
+          {
+            "uid": "aaW-Ig0zQcC-y76ncnknVQ",
+            "type": "combined",
+            "contents": [
+              {
+                "type": "osm-tiles",
+                "uid": "AdstKrulTPS1efafRjY2QQ",
+                "tilesetUid": "JC76ehyHQWCWvR_z2J9zkA",
+                "server": "http://resgen.io/api/v1",
+                "options": {
+                  "minPos": -180,
+                  "maxPos": 180,
+                  "maxZoom": 19
+                },
+                "name": "OSM Tiles",
+                "width": 718,
+                "height": 728,
+                "position": "center"
+              },
+              {
+                "type": "geo-json",
+                "uid": "TlNlo3luQSOv8VAs-6YcqA",
+                "tilesetUid": "OcKta-WuQ_KBXZsDMSex_Q",
+                "server": "http://resgen.io/api/v1",
+                "options": {
+                  "projecton": "mercator",
+                  "labelColor": "black",
+                  "labelPosition": "hidden",
+                  "trackBorderWidth": 0,
+                  "trackBorderColor": "black",
+                  "rectangleDomainFillColor": "red",
+                  "rectangleDomainStrokeColor": "black",
+                  "rectangleDomainOpacity": 0.6,
+                  "rectanlgeMinSize": 1,
+                  "polygonMinBoundingSize": 0,
+                  "name": "ski-areas.geo.json (1).gjdb"
+                },
+                "name": "ski-areas.geo.json (1).gjdb",
+                "width": 20,
+                "height": 20,
+                "position": "center"
+              }
+            ],
+            "position": "center",
+            "options": {},
+            "width": 718,
+            "height": 728
+          }
+        ],
+        "bottom": [],
+        "right": []
+      },
+      "layout": {
+        "w": 12,
+        "h": 6,
+        "x": 0,
+        "y": 0,
+        "i": "QqeBO9F6TFmfsgTVgz8aCw",
+        "moved": false,
+        "static": false
+      },
+      "uid": "QqeBO9F6TFmfsgTVgz8aCw"
+    }
+  ],
+  "zoomLocks": {
+    "locksByViewUid": {},
+    "locksDict": {}
+  },
+  "locationLocks": {
+    "locksByViewUid": {},
+    "locksDict": {}
+  },
+  "valueScaleLocks": {
+    "locksByViewUid": {},
+    "locksDict": {}
+  }
+}
+
+    window.higlassApi;
+
+    window.hgApi = hglib.viewer(
+        document.getElementById('development-demo'),
+        testViewConfig,
+        { bounded: true }
+    );
+
+
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-77756807-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+</html>
